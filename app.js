@@ -11,6 +11,25 @@ function Book(title, author, isbn)
 
 function UI() {}
 
+// Show alert
+UI.prototype.showAlert = function(message, class_name)
+{
+    const container = document.querySelector('.container');
+    form = document.querySelector('form');
+    const div = document.createElement('div');
+    div.textContent = message;
+    div.className = class_name + ' u-full-width alert';
+    container.insertBefore(div, form);
+
+    //Clear error
+    setTimeout(clearError, 3000);
+}
+
+//Clear error
+function clearError()
+{
+    document.querySelector('.alert').remove();
+}
 //Add to list prototype
 UI.prototype.addBookToList = function(book)
 {
@@ -44,16 +63,26 @@ document.getElementById('book-form').addEventListener('submit', function(e) {
     const title = document.getElementById('title').value,
         author = document.getElementById('author').value,
         isbn = document.getElementById('isbn').value;
+    
+    // Instantiate UI
+    const ui = new UI();
 
-    //Add these values to Book constuctor
-    book = new Book(title, author, isbn);
-     
-    //Add these values to table
-    ui = new UI();
-    ui.addBookToList(book);
+    if(title === '' || author === '' || isbn === '')
+    {
+        ui.showAlert('Please fill in all fields..', 'error');
+    }
+    else
+    {
+        //Add these values to Book constuctor
+        const book = new Book(title, author, isbn);
 
-    //Clear form elements
-    ui.clearForm();
+        //Add these values to table
+        ui.addBookToList(book);
 
+        //Show success message
+        ui.showAlert('Book added successfully..', 'success');
+        //Clear form elements
+        ui.clearForm();
+    }
     e.preventDefault();
 })
