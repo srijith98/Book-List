@@ -68,6 +68,9 @@ UI.prototype.deleteBook = function(target)
 
 //Event listeners
 
+//Event listener for page load
+document.addEventListener('DOMContentLoaded', displayBooksFromLocalStorage);
+
 //Event listener for submit
 document.getElementById('book-form').addEventListener('submit', function(e) {
     //Form values
@@ -90,6 +93,9 @@ document.getElementById('book-form').addEventListener('submit', function(e) {
         //Add these values to table
         ui.addBookToList(book);
 
+        //Add book to LS
+        addBookToLocalStorage(book);
+
         //Show success message
         ui.showAlert('Book added successfully..', 'success');
         //Clear form elements
@@ -107,8 +113,65 @@ document.getElementById('book-list').addEventListener('click', function(e) {
     //Delete the book
     ui.deleteBook(e.target);
 
+    // Get isbn of the book to be deleted
+    let isbn = e.target.parentElement.parentElement.previousElementSibling.textContent;
+    //Delete from LS
+    removeBookFromLocalStorage(isbn);
+
     //Show delete succesful mesaage
     ui.showAlert('Book deleted successfully..', 'success');
 
     e.preventDefault();
 })
+
+//LOCAL STORAGE
+
+//Get books
+function getBooksFromLocalStorage()
+{
+    let books;
+    if(localStorage.getItem('books') == null)
+    {
+        books = [];
+    }
+    else
+    {
+        books = JSON.parse(localStorage.getItem('books'));
+    }
+    return books;
+}
+
+//Display books
+function displayBooksFromLocalStorage(e)
+{
+    const books = getBooksFromLocalStorage();
+
+    books.forEach(function(book) {
+        const ui = new UI();
+        //Add these values to table
+        ui.addBookToList(book);
+    });
+}
+
+//Add to LS
+function addBookToLocalStorage(newBook)
+{
+    const books = getBooksFromLocalStorage();
+
+    books.push(newBook);
+    localStorage.setItem('books', JSON.stringify(books));
+}
+
+// Remove book from LS
+function removeBookFromLocalStorage(isbn)
+{
+    const books = getBooksFromLocalStorage();
+
+    books.forEach(function(book, index) {
+        if(book.isbn == isbn)
+        {
+            books.splice(index, 1);
+        }
+    });
+    localStorage.setItem('books', JSON.stringify(books));
+}
