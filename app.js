@@ -42,7 +42,7 @@ UI.prototype.addBookToList = function(book)
         <td>${book.title}</td>
         <td>${book.author}</td>
         <td>${book.isbn}</td>
-        <td><a href="#"><img src="https://img.icons8.com/material-rounded/24/000000/delete-forever.png"></a></td>
+        <td><a href="#"><img src="https://img.icons8.com/material-rounded/24/000000/delete-forever.png" class = "delete"></a></td>
     `;
     //Append tr to list
     list.appendChild(tr);
@@ -56,8 +56,19 @@ UI.prototype.clearForm = function()
     document.getElementById('isbn').value = '';
 }
 
+//Delete book
+UI.prototype.deleteBook = function(target)
+{
+    //Delete the book only if clicked on delete icon
+    if(target.className === 'delete')
+    {
+        target.parentElement.parentElement.parentElement.remove();
+    }
+}
+
 //Event listeners
 
+//Event listener for submit
 document.getElementById('book-form').addEventListener('submit', function(e) {
     //Form values
     const title = document.getElementById('title').value,
@@ -84,5 +95,20 @@ document.getElementById('book-form').addEventListener('submit', function(e) {
         //Clear form elements
         ui.clearForm();
     }
+    e.preventDefault();
+})
+
+//Event listener for delete
+document.getElementById('book-list').addEventListener('click', function(e) {
+    
+    // Instantiate UI
+    const ui = new UI();
+
+    //Delete the book
+    ui.deleteBook(e.target);
+
+    //Show delete succesful mesaage
+    ui.showAlert('Book deleted successfully..', 'success');
+
     e.preventDefault();
 })
